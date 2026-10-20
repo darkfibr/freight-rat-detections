@@ -1,0 +1,608 @@
+{
+  "case": "goose_20261020",
+  "title": "US trucking/freight EtherHiding campaign - machine-readable indicator set (rev 2, after samples/PAYLOAD_TEARDOWN.md)",
+  "generated": "2026-10-20",
+  "handling": "static-only collection; no IOC host contacted (DNS TXT record deliberately not queried - it is C2); nothing executed; nothing submitted anywhere",
+  "attribution": "none - no actor, developer, or country is named by this case; code artifacts (a personal-name-shaped AES key, Armenian comments) are treated as artifacts, not attribution",
+  "credential_note": "The loader hardcodes an AES-128-ECB key (DNS/gist/cache decryption constant in main.js). It is withheld from this file as a credential and a doxxing-adjacent artifact; only its existence and source location are recorded.",
+  "confidence_vocabulary": {
+    "chain-verified": "read from BSC by eth_call/eth_getCode/storage bisection and byte-identical across independent RPC endpoints (chain/evidence/, chain/DEAD_DROP.md)",
+    "reported": "published in a public post (@vxunderground 2026-09-04, skocherhan 2026-07-14/07-24 tweets, or a named third-party feed); not independently file-verified",
+    "blocklist-derived": "string-level presence in a public blocklist (nma-io/adblock_lists etherhide.txt) - a sighting date, not proof of liveness or ownership",
+    "inferred": "judged from co-occurrence/overlap in feeds or artifacts, explicitly not directly observed",
+    "verified": "artifact acquired and hash-verified, or present verbatim in recovered source-equivalent code (samples/PAYLOAD_TEARDOWN.md); matches the samples lane's own label",
+    "urlscan-cluster": "shares the bespoke 'Remote Support Console' kit per urlscan/OTX evidence (panel/PANEL_ID.md s3); cluster membership, not dead-drop membership"
+  },
+  "notes": [
+    "CONTRACT SPLIT (material): loader main.js v1/v2 (2026-06-16) hardcode 0xCc4B...E61b (currently holds the 7-URL JSON); v3/v4 (2026-09-03, incl. the build publicised 2026-09-04) hardcode 0xfb9B...D277 (get() currently EMPTY). The published build's blockchain layer therefore yields nothing and falls back to DNS/gist/cache (samples/PAYLOAD_TEARDOWN.md s9).",
+    "SOURCE-EQUIVALENT, NOT PUBLISHED BYTES: the loader was recovered from the operator's own public GitHub repo wservices66-maker/hello; its build hashes differ from the hashes published on 2026-09-04. Same family and functionality, not the same file. The stage-1 VBS and the published JS bytes remain unobtained.",
+    "The July MD5 1e960e47... matches none of the four repo builds - at least one further build existed.",
+    "Domains rotate; contracts and the DNS anchor are permanent. chain/DEAD_DROP.md s2: the contract writer set(string) is OPEN (no owner check) - the creator EOA is simply the only key that has written (18/18).",
+    "Panel-cluster hosts are one bespoke kit across many domains; the '17 hosts' figure in panel/PANEL_ID.md enumerates to 16 named hosts - flagged in report/CASE_GOOSE_20261020.md."
+  ],
+  "indicators": [
+    {
+      "value": "0xCc4BCd51e0eA7E254b0F30044538F6Cb86a4E61b",
+      "type": "bsc-contract-address",
+      "role": "etherhiding-dead-drop-contract used by loader main.js v1/v2 (2026-06-16); deployed 2026-05-12T07:33:24Z block 97815933; 18 set(string) writes through 2026-10-12; CURRENT value = the 7-URL JSON; selectors get() 0x6d4ce63c / endpoint() 0x5e280f11, writer set(string) 0x4ed3885e (open, no owner)",
+      "source": "@vxunderground 2026-09-04 thread; chain/DEAD_DROP.md s1-s6 (deploy/rotation history recovered via archive RPC); samples/PAYLOAD_TEARDOWN.md s8-s9",
+      "first_seen": "2026-05-12T07:33:24Z (deploy tx 0xd4535f4f35bba2e109d9c5466b3f8921079d44c1637be72857ea3a122f279a7a)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "0xfb9B234CdcE6dd9E0Eb4895b5682eBebE0b3D277",
+      "type": "bsc-contract-address",
+      "role": "etherhiding-dead-drop-contract used by loader main.js v3/v4 (2026-09-03) - THE BUILD PUBLICISED ON 2026-09-04 READS THIS ONE; deployed 2026-07-30T11:37:30Z block 113003076; NEVER written (spare slot, empty get()/endpoint()); same 1789-byte runtime as Cc4B",
+      "source": "@vxunderground 2026-09-04 thread; chain/DEAD_DROP.md s1-s6; samples/PAYLOAD_TEARDOWN.md s8-s9",
+      "first_seen": "2026-07-30T11:37:30Z (deploy tx 0xf8298640e9a96812f6b935bb350de69dd0c6baf2b48522557bda6c0ef9638cb4)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "0xBA8B70D5B15cFbFD628F71560aAb996356c0fa84",
+      "type": "bsc-address",
+      "role": "creator/deployer EOA of BOTH contracts (nonce 364 = Cc4B deploy, 390 = fb9B deploy; 18/18 Cc4B writes from this key); solc 0.8.20",
+      "source": "@vxunderground 2026-09-04 thread (reported); chain-verified 2026-10-20 by deploy-tx and nonce-map recovery (chain/DEAD_DROP.md s1/s6) - NOTE: samples/INDICATOR_TRIAGE.md s1 row 19 still says 'reported only (not chain-queried)'; the chain lane settled it",
+      "first_seen": "2026-05-12 (deploy of first contract); public post 2026-09-04",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "api.xyz-code.biz",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #15 2026-09-21; in the current 7-URL value; consumed by v1/v2-era agents; serves the panel kit)",
+      "source": "chain/DEAD_DROP.md s5-s6; blocklist 2026-09-21T23:00Z (6h after the chain write); urlscan panel 200 2026-10-05",
+      "first_seen": "2026-09-21T17:08:54Z (chain write #15)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "app.app-river.icu",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #15 2026-09-21; current 7-URL value; panel kit)",
+      "source": "chain/DEAD_DROP.md s5-s6; blocklist 2026-09-21T23:00Z; urlscan panel 200 2026-10-03/10-05",
+      "first_seen": "2026-09-21T17:08:54Z (chain write #15)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "play.app-open.click",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain SPINE: present in 15/18 values since 2026-05-16, in current 7-URL value; likely nonfunctional - registrar serverHold since 2026-09-16)",
+      "source": "chain/DEAD_DROP.md s6 (rotation observations); skocherhan tweet 2026-07-24; RDAP",
+      "first_seen": "2026-05-16T10:23:29Z (chain write #4)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "check.okx3.io",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #17 2026-09-30; current 7-URL value; panel kit)",
+      "source": "chain/DEAD_DROP.md s5-s6; urlscan panel 200 2026-10-05T13:18Z; blocklist 2026-10-17",
+      "first_seen": "2026-09-30T13:33:12Z (chain write #17)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "tool.nffnj.workers.dev",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #18 2026-10-12; current 7-URL value; Cloudflare Worker; panel kit)",
+      "source": "chain/DEAD_DROP.md s5-s6; urlscan panel 200 2026-10-14T19:56Z; blocklist 2026-10-17",
+      "first_seen": "2026-10-12T11:31:16Z (chain write #18)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "files.nffnj.workers.dev",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #18 2026-10-12; current 7-URL value; Cloudflare Worker)",
+      "source": "chain/DEAD_DROP.md s5-s6; blocklist 2026-10-17",
+      "first_seen": "2026-10-12T11:31:16Z (chain write #18)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "remember.nffnj.workers.dev",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain from write #18 2026-10-12; current 7-URL value; Cloudflare Worker; panel kit)",
+      "source": "chain/DEAD_DROP.md s5-s6; urlscan panel 200 2026-10-14T20:39Z; blocklist 2026-10-17",
+      "first_seen": "2026-10-12T11:31:16Z (chain write #18)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "carrierpackready.com",
+      "type": "domain",
+      "role": "stage-0 masquerade / lure domain (fake freight portal offering the .vbs download; quiet since 2026-09-24)",
+      "source": "@vxunderground 2026-09-04 thread; RDAP registration 2026-09-02T19:23Z (infra/TIMELINE.md row 17)",
+      "first_seen": "2026-09-02T19:23Z (RDAP registration)",
+      "confidence": "reported"
+    },
+    {
+      "value": "do.opinionvip.club",
+      "type": "hostname",
+      "role": "c2-panel-host (on-chain 2026-05-16 -> dropped 2026-09-30; WARM pool - two certs 2026-10-14, /static/main.js 200 2026-10-11; panel-kit cluster member)",
+      "source": "chain/DEAD_DROP.md s6; @vxunderground thread + panel screenshot; skocherhan tweet 2026-07-24; OTX (panel/PANEL_ID.md s3.4)",
+      "first_seen": "2026-05-16T10:23:29Z (chain write #4); public sighting 2026-07-24T23:06Z",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "amc-us.mprevive.com",
+      "type": "hostname",
+      "role": "c2-panel-host + payload host (on-chain 2026-05-16 -> dropped 2026-09-21; WARM pool - two certs 2026-10-18; served /cdn/hello.txt payload; panel-kit cluster member)",
+      "source": "chain/DEAD_DROP.md s6; TweetFeed 2026-07-14/07-24; URLhaus 3921081; urlscan panel 200 2026-09-22..2026-10-05",
+      "first_seen": "2026-05-16T10:34:19Z (chain write #5); public sighting 2026-07-14T12:28Z (TweetFeed)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "api-wls.ngrok.app",
+      "type": "hostname",
+      "role": "c2-tunnel + installer payload host (/static/main.js) (on-chain 2026-08-31 -> rotated out 2026-09-07; RETIRED)",
+      "source": "chain/DEAD_DROP.md s6; @vxunderground thread; samples/PAYLOAD_TEARDOWN.md s2.3 (installer URL list)",
+      "first_seen": "2026-08-31T15:30:06Z (chain write #13)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "main-tunnel.ngrok.io",
+      "type": "hostname",
+      "role": "c2-tunnel + installer payload host (on-chain 2026-08-31 -> 2026-09-07; RETIRED)",
+      "source": "chain/DEAD_DROP.md s6; @vxunderground thread; samples/PAYLOAD_TEARDOWN.md s2.3",
+      "first_seen": "2026-08-31T15:30:06Z (chain write #13)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "excite.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (the IEX(IRM ...) target in the two-line VBS)",
+      "source": "screenshot OCR x2 (samples/ACQUISITION.md); ThreatFox 1923698 payload_delivery conf 75 (etherhide/LINEAGE.md s6.1)",
+      "first_seen": "2026-09-04 (screenshot OCR); ThreatFox 2026-09-18T05:05:10Z",
+      "confidence": "reported"
+    },
+    {
+      "value": "siren.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5, 11-worker set)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "peanut.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "occur.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "lobster.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "globe.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "farm.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "engage.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "grace.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "bulb.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "burden.aeafh.workers.dev",
+      "type": "hostname",
+      "role": "stage-1 payload delivery host (aeafh namespace)",
+      "source": "ThreatFox filing 2026-09-18 (infra/INFRA_MAP.md s5)",
+      "first_seen": "2026-09-18T05:04-05:06Z (ThreatFox)",
+      "confidence": "reported"
+    },
+    {
+      "value": "foundation.forum",
+      "type": "domain",
+      "role": "DNS DISCOVERY ANCHOR for current builds (TXT at _relay._discovery.foundation.forum; default DNS_DISCOVERY_DOMAIN in main.js v3/v4) + historical C2 (play./go./node./free.foundation.forum subdomains on-chain May 2026) + panel-kit cluster (apex + am.foundation.forum, Oct 2026)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s4.4 (in code); chain/DEAD_DROP.md s6 (writes #2-#5); panel/PANEL_ID.md s3.1",
+      "first_seen": "2026-05-13T07:22:42Z (chain write #2 as C2); in code 2026-09-03",
+      "confidence": "verified"
+    },
+    {
+      "value": "_relay._discovery.foundation.forum",
+      "type": "dns-txt-name",
+      "role": "DNS TXT dead-drop record name (DoH lookup via cloudflare-dns.com/dns-query and dns.google/resolve; hex payload, AES-128-ECB encrypted {urls,ts}; key withheld) - NOT queried by this case (C2, off-limits)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s4.4 (in code)",
+      "first_seen": "2026-09-03 (main.js v3 commit e2c892f84b)",
+      "confidence": "verified"
+    },
+    {
+      "value": "https://gist.githubusercontent.com/wservices66-maker/53ba3186cf8ec0cada46fc1ccb4a0ec71/raw/apiKey",
+      "type": "url",
+      "role": "gist fallback dead-drop (hex + AES-128-ECB {urls}); currently HTTP 404 (checked 2026-10-20, no auth)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s4.5 (in code)",
+      "first_seen": "2026-09-03 (main.js v3)",
+      "confidence": "verified"
+    },
+    {
+      "value": "53ba3186cf8ec0cada46fc1ccb4a0ec71",
+      "type": "gist-id",
+      "role": "gist ID of the fallback dead-drop (owner wservices66-maker); dead (404)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1/s4.5",
+      "first_seen": "2026-09-03",
+      "confidence": "verified"
+    },
+    {
+      "value": "wservices66-maker/hello",
+      "type": "github-repository",
+      "role": "operator's public source repo: loader main.js v1-v4, installer info.txt, hello.hta stub (7 commits 2025-10-07..2026-09-04)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1 (GitHub API, all files hash-verified)",
+      "first_seen": "2025-10-07T20:03:08Z (repo creation)",
+      "confidence": "verified"
+    },
+    {
+      "value": "wservices66-maker",
+      "type": "github-account",
+      "role": "operator platform account (repo + gist owner; posted publicly alongside the July MD5 by skocherhan 2026-07-24)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1; infra/OPERATOR_ARTIFACTS.md A1-A15",
+      "first_seen": "2025-10-07T20:02:56Z (account creation)",
+      "confidence": "verified"
+    },
+    {
+      "value": "ONLINE FREIGHT SERVICES_CARRIER_ONB_PACKET_UPDATE (1).vbs",
+      "type": "filename",
+      "role": "stage-1 lure attachment (freight-broker onboarding packet pretense; '(1)' duplicate-download suffix)",
+      "source": "@vxunderground 2026-09-04 screenshot + case brief (tab OCR truncates as ONLINE_FREIGHT_SERVICES_CAR_ONB_PACKET_UPDATE (1).vbs)",
+      "first_seen": "2026-09-04 (screenshot)",
+      "confidence": "reported"
+    },
+    {
+      "value": "d26be4bef5afbebc9a831ee00bdf0fd2f5e57e86eb8e89a0b57c9534352f3cdf",
+      "type": "sha256_hash",
+      "role": "stage-1 VBS (NOT acquired; MalwareBazaar hash_not_found 2026-10-20)",
+      "source": "@vxunderground 2026-09-04 thread (samples/ACQUISITION.md)",
+      "first_seen": "2026-09-04",
+      "confidence": "reported"
+    },
+    {
+      "value": "72a5f71233cbe244048e335aad829570f5aba2b72a8e346544ae9fd327c321ea",
+      "type": "sha256_hash",
+      "role": "stage-2 JS as published 2026-09-04 (~20,129-line obfuscated bundle; NOT acquired; matches none of the recovered repo builds)",
+      "source": "@vxunderground 2026-09-04 thread",
+      "first_seen": "2026-09-04",
+      "confidence": "reported"
+    },
+    {
+      "value": "4c56e9af087b0264e0e0c9cb061fd87151e10a544dff0c6b6bc37547ef05334a",
+      "type": "sha256_hash",
+      "role": "loader main.js v1 (repo build, 2026-06-16T16:53:24Z, 1,106,985 B, base64-only obfuscation, BSC-only, contract 0xCc4B) - SOURCE-EQUIVALENT, not the published bytes",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1 (repo commit 38a2503e0f, hash-verified)",
+      "first_seen": "2026-06-16T16:53:24Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "11410cdf29bc1f1ded6fd7dae48e20cf71fd9cb11d8deafce54a76fd582c319e",
+      "type": "sha256_hash",
+      "role": "loader main.js v2 (repo build, 2026-06-16T18:59:49Z, 2,331,759 B, base64+RC4 re-obfuscation, feature-identical to v1, contract 0xCc4B)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1 (commit 3276c66487)",
+      "first_seen": "2026-06-16T18:59:49Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "c946dc76e0b39974450fb22127bef7b216f6217b5f36644a0ce8caedf330df18",
+      "type": "sha256_hash",
+      "role": "loader main.js v3 (repo build, 2026-09-03T09:51:33Z, 2,386,519 B; adds Polygon+Arbitrum RPCs, DNS DoH discovery, gist fallback, relay-peers; switches contract to 0xfb9B)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1 (commit e2c892f84b)",
+      "first_seen": "2026-09-03T09:51:33Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "696fc814fa188e918e59cf4046c7f62062a61f5ea1bf66da59961851db10a0d5",
+      "type": "sha256_hash",
+      "role": "loader main.js v4 (repo build, 2026-09-03T16:26:33Z, 2,404,348 B, current; rebuild/re-obfuscation of v3, no functional change, contract 0xfb9B)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1 (commit 459ec8de3f)",
+      "first_seen": "2026-09-03T16:26:33Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "e5ff711ca8d505be6f83ac1cd7a1615143e7568c776be3be390e59846e3466a0",
+      "type": "sha256_hash",
+      "role": "installer info.txt (PowerShell, 13,025 B, committed 2026-09-04T10:04:14Z - disclosure day; Node v20.11.0 + NodeRemote scheduled-task installer)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1-s2 (commit bbbff32158)",
+      "first_seen": "2026-09-04T10:04:14Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "3913a1f77203ebb9e0991e1881279fa6172c9b8fde993fdc5d5be96254cd246f",
+      "type": "sha256_hash",
+      "role": "hello.hta stub (456 B, created+deleted 2025-10-07; remote icon host back.nodego.cloud)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1-s1.2 (commit 844deac09b)",
+      "first_seen": "2025-10-07T20:03:50Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "570e354d5ba56a244fe1b6d08ae36a5c6e489fb53a710524afe065cedfac5f30",
+      "type": "sha256_hash",
+      "role": "sibling payload: 2,456-byte ASCII PowerShell served at https://amc-us.mprevive.com/cdn/hello.txt (URLhaus 3921081); Telegram beacon/wallet-check - a DIFFERENT file from the NodeRemote installer; does not reference the contracts or the 7 current hosts [inferred sibling]",
+      "source": "URLhaus 3921081; acquired via datalake, hash-verified (samples/ACQUISITION.md, samples/ANALYSIS.md; distinctness per PAYLOAD_TEARDOWN.md s12.7)",
+      "first_seen": "2026-09-22T17:52:12Z (URLhaus)",
+      "confidence": "verified"
+    },
+    {
+      "value": "1e960e47fb33035ab1236f1ad75ed684",
+      "type": "md5_hash",
+      "role": "July payload MD5 (posted with the wservices66-maker link 2026-07-24); matches NONE of repo builds v1-v4 -> at least one further build existed between v2 (Jun 16) and v3 (Sep 3)",
+      "source": "skocherhan tweet 2080793137350365509; samples/PAYLOAD_TEARDOWN.md s8",
+      "first_seen": "2026-07-24T23:11:57Z",
+      "confidence": "reported"
+    },
+    {
+      "value": "edf8fc2c9371c31a3e9abeba9884c214",
+      "type": "md5_hash",
+      "role": "MD5 of the URLhaus sibling payload (ZIP member name in the datalake batch)",
+      "source": "URLhaus 3921081 payload record",
+      "first_seen": "2026-09-22",
+      "confidence": "verified"
+    },
+    {
+      "value": "api.telegram.org",
+      "type": "hostname",
+      "role": "sibling payload C2 (Telegram Bot API sendMessage beacon)",
+      "source": "samples/files/570e354d.ps1 (samples/INDICATOR_TRIAGE.md s1.2)",
+      "first_seen": "2026-09-22",
+      "confidence": "verified"
+    },
+    {
+      "value": "7406279511",
+      "type": "telegram-chat-id",
+      "role": "sibling payload C2 chat id (bot token held in samples/ANALYSIS.md, not duplicated here)",
+      "source": "samples/files/570e354d.ps1 (samples/INDICATOR_TRIAGE.md s1.2)",
+      "first_seen": "2026-09-22",
+      "confidence": "verified"
+    },
+    {
+      "value": "remove.ncsgo.workers.dev",
+      "type": "hostname",
+      "role": "dormant second-stage host (commented iwr line in the sibling payload) AND on-chain dead-drop entry (writes #16/#17, 2026-09-22 -> rotated out 2026-10-12)",
+      "source": "samples/files/570e354d.ps1; chain/DEAD_DROP.md s6",
+      "first_seen": "2026-09-22T12:25:07Z (chain write #16)",
+      "confidence": "verified"
+    },
+    {
+      "value": "https://storage.googleapis.com/gts-files-2026/84a91509-b2fc-4f5f-a0ac-71ef90aedf89/minerlauncher.exe",
+      "type": "url",
+      "role": "dormant miner payload URL (commented out, sibling payload line 37; drop path C:\\tool\\mine.exe)",
+      "source": "samples/files/570e354d.ps1 (samples/INDICATOR_TRIAGE.md s1.2)",
+      "first_seen": "2026-09-22 (in file)",
+      "confidence": "verified"
+    },
+    {
+      "value": "*NodeRemote*",
+      "type": "artifact-name",
+      "role": "scheduled-task name pattern (persistence/keepalive; sibling payload + installer final line force-starts any matching task)",
+      "source": "samples/files/570e354d.ps1; samples/PAYLOAD_TEARDOWN.md s2.4",
+      "first_seen": "2026-09-22 (in sibling file)",
+      "confidence": "verified"
+    },
+    {
+      "value": "NodeRemote{GUID}",
+      "type": "artifact-name",
+      "role": "installed scheduled task: GUID = first 16 bytes of SHA256(username); description 'My Custom Important Task'; wscript.exe nodeupdate.vbs; logon trigger + PT1H repeat; RunLevel highest if admin",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.1/s2.4 (info.txt)",
+      "first_seen": "2026-09-04 (info.txt)",
+      "confidence": "verified"
+    },
+    {
+      "value": "My Custom Important Task",
+      "type": "artifact-name",
+      "role": "scheduled-task description string (installer)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.4",
+      "first_seen": "2026-09-04",
+      "confidence": "verified"
+    },
+    {
+      "value": "WebServer-<COMPUTERNAME>",
+      "type": "artifact-name",
+      "role": "install directory under %LOCALAPPDATA% (main.js + node\\node.exe v20.11.0 + nodeupdate.vbs + .env with SUPER_ADMIN_KEY=); legacy name NodeRemoteSupport",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.1",
+      "first_seen": "2026-09-04",
+      "confidence": "verified"
+    },
+    {
+      "value": "nodeupdate.vbs",
+      "type": "filename",
+      "role": "hidden VBS launcher dropped by the installer (shell.Run node.exe main.js, 0, False)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.4",
+      "first_seen": "2026-09-04",
+      "confidence": "verified"
+    },
+    {
+      "value": "wise-overfeed-sitting.ngrok-free.dev",
+      "type": "hostname",
+      "role": "installer payload host (/static/main.js) - first in the installer's download list",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.3 (info.txt)",
+      "first_seen": "2026-09-04T10:04:14Z (info.txt commit)",
+      "confidence": "verified"
+    },
+    {
+      "value": "api-truck.ngrok.app",
+      "type": "hostname",
+      "role": "installer payload host (/static/main.js; commented /cdn/hello_world.txt non-admin fallback)",
+      "source": "samples/PAYLOAD_TEARDOWN.md s2.3-s2.4",
+      "first_seen": "2026-09-04T10:04:14Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "back.nodego.cloud",
+      "type": "hostname",
+      "role": "HTA icon host (hello.hta /cdn/icon.ico, 2025-10-07); nodego.cloud currently unregistered per registry RDAP",
+      "source": "samples/PAYLOAD_TEARDOWN.md s1.2; infra/OPERATOR_ARTIFACTS.md A15",
+      "first_seen": "2025-10-07T20:03:50Z",
+      "confidence": "verified"
+    },
+    {
+      "value": "lxservice.net",
+      "type": "hostname",
+      "role": "panel-kit host (bespoke 'Remote Support Console' cluster; NOT a dead-drop-listed C2)",
+      "source": "urlscan page.title cluster (panel/PANEL_ID.md s3.1)",
+      "first_seen": "2026-09-21 (urlscan)",
+      "confidence": "urlscan-cluster"
+    },
+    {
+      "value": "cfd.fins.workers.dev",
+      "type": "hostname",
+      "role": "on-chain dead-drop entry (writes #16/#17, 2026-09-22 -> 2026-10-12) + panel-kit host + ThreatFox 1923632 (filed 78s after excite.aeafh.workers.dev)",
+      "source": "chain/DEAD_DROP.md s6; panel/PANEL_ID.md s3.1; ThreatFox (etherhide/CLUSTER.md s4)",
+      "first_seen": "2026-09-18T05:06:28Z (ThreatFox); on-chain 2026-09-22T12:25:07Z",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "tool.ncsgo.workers.dev",
+      "type": "hostname",
+      "role": "on-chain dead-drop entry (writes #16/#17) + panel-kit host",
+      "source": "chain/DEAD_DROP.md s6; panel/PANEL_ID.md s3.1",
+      "first_seen": "2026-09-22T12:25:07Z (chain write #16)",
+      "confidence": "chain-verified"
+    },
+    {
+      "value": "remember.ncsgo.workers.dev",
+      "type": "hostname",
+      "role": "panel-kit host (cluster)",
+      "source": "urlscan (panel/PANEL_ID.md s3.1)",
+      "first_seen": "2026-09-25 (urlscan)",
+      "confidence": "urlscan-cluster"
+    },
+    {
+      "value": "api.beta-into.space",
+      "type": "hostname",
+      "role": "panel-kit host (cluster); sibling find.beta-into.space was an on-chain entry (writes #14/#15)",
+      "source": "urlscan (panel/PANEL_ID.md s3.1); chain/DEAD_DROP.md s6",
+      "first_seen": "2026-09-25 (urlscan)",
+      "confidence": "urlscan-cluster"
+    },
+    {
+      "value": "am.foundation.forum",
+      "type": "hostname",
+      "role": "panel-kit host (cluster; foundation.forum is the DNS discovery anchor)",
+      "source": "urlscan (panel/PANEL_ID.md s3.1)",
+      "first_seen": "2026-10-13 (urlscan)",
+      "confidence": "urlscan-cluster"
+    },
+    {
+      "value": "down.fins.workers.dev",
+      "type": "hostname",
+      "role": "panel-kit host (cluster)",
+      "source": "urlscan (panel/PANEL_ID.md s3.1)",
+      "first_seen": "2026-10-09 (urlscan)",
+      "confidence": "urlscan-cluster"
+    },
+    {
+      "value": "app-river.icu",
+      "type": "domain",
+      "role": "panel-kit host (apex served the panel 2026-10-05; registrable domain of app.app-river.icu; registered 2025-12-18 - oldest pool member)",
+      "source": "urlscan (panel/PANEL_ID.md s3.1); RDAP (infra/INFRA_MAP.md s1)",
+      "first_seen": "2026-10-05 (urlscan as panel host); registered 2025-12-18T10:01:56Z",
+      "confidence": "urlscan-cluster"
+    }
+  ],
+  "historical_onchain_hosts": {
+    "note": "Dead-drop entries recovered from the 18-write rotation history of 0xCc4B (chain/DEAD_DROP.md s6, storage bisection via archive RPC). Every one was live C2 at some point between 2026-05-12 and 2026-10-12; most were rotated out before any public report. Retro-hunt gold; also explains blocklist/TweetFeed co-occurrences.",
+    "entries": [
+      {"value": "play.trynode.info", "type": "hostname", "first_seen": "2026-05-12T09:34:45Z (write #1)", "confidence": "chain-verified"},
+      {"value": "patio-revision-namely-ebook.trycloudflare.com", "type": "hostname", "first_seen": "2026-05-12T09:34:45Z (write #1)", "confidence": "chain-verified"},
+      {"value": "play.foundation.forum", "type": "hostname", "first_seen": "2026-05-13T07:22:42Z (write #2)", "confidence": "chain-verified"},
+      {"value": "go.foundation.forum", "type": "hostname", "first_seen": "2026-05-13T12:38:31Z (write #3)", "confidence": "chain-verified"},
+      {"value": "node.foundation.forum", "type": "hostname", "first_seen": "2026-05-13T12:38:31Z (write #3)", "confidence": "chain-verified"},
+      {"value": "free.foundation.forum", "type": "hostname", "first_seen": "2026-05-13T12:38:31Z (write #3)", "confidence": "chain-verified"},
+      {"value": "setup-avenging-oblivious.ngrok-free.dev", "type": "hostname", "first_seen": "2026-05-16T10:34:19Z (write #5)", "confidence": "chain-verified"},
+      {"value": "node-worker.denisfsr-kemp.workers.dev", "type": "hostname", "first_seen": "2026-05-17T08:14:02Z (write #6)", "confidence": "chain-verified"},
+      {"value": "okidoki.ngrok.app", "type": "hostname", "first_seen": "2026-05-25T16:31:15Z (write #7)", "confidence": "chain-verified"},
+      {"value": "prewar-scorpion-dragster.ngrok-free.dev", "type": "hostname", "first_seen": "2026-05-25T16:31:15Z (write #7)", "confidence": "chain-verified"},
+      {"value": "unleaded-paralyze-suffice.ngrok-free.dev", "type": "hostname", "first_seen": "2026-06-12T09:13:55Z (write #8)", "confidence": "chain-verified"},
+      {"value": "cdn.denisfsr-kemp.workers.dev", "type": "hostname", "first_seen": "2026-06-12T09:13:55Z (write #8)", "confidence": "chain-verified"},
+      {"value": "nextjs2385.ngrok.io", "type": "hostname", "first_seen": "2026-07-07T15:04:58Z (write #9)", "confidence": "chain-verified"},
+      {"value": "laurel-nontheologic-verbatim.ngrok-free.dev", "type": "hostname", "first_seen": "2026-07-07T15:04:58Z (write #9)", "confidence": "chain-verified"},
+      {"value": "cdn.clintonpqfg-adriance.workers.dev", "type": "hostname", "first_seen": "2026-07-07T15:05:23Z (write #10)", "confidence": "chain-verified"},
+      {"value": "daycare-moisture-bottom.ngrok-free.dev", "type": "hostname", "first_seen": "2026-07-20T15:46:13Z (write #11)", "confidence": "chain-verified"},
+      {"value": "nest5478.ngrok.app", "type": "hostname", "first_seen": "2026-07-30T14:53:14Z (write #12)", "confidence": "chain-verified"},
+      {"value": "api-call.ngrok.io", "type": "hostname", "first_seen": "2026-07-30T14:53:14Z (write #12)", "confidence": "chain-verified"},
+      {"value": "worker.defenders.workers.dev", "type": "hostname", "first_seen": "2026-07-30T14:53:14Z (write #12)", "confidence": "chain-verified"},
+      {"value": "find.beta-into.space", "type": "hostname", "first_seen": "2026-09-07T16:21:34Z (write #14)", "confidence": "chain-verified"},
+      {"value": "api.vooi-app.xyz", "type": "hostname", "first_seen": "2026-09-07T16:21:34Z (write #14)", "confidence": "chain-verified"}
+    ]
+  },
+  "sibling_candidates": {
+    "note": "Ranked candidates from etherhide/CLUSTER.md that are NOT on-chain and NOT confirmed campaign IOCs. Do not block without corroboration; hunt pivots only.",
+    "entries": [
+      {
+        "value": "dome.beatdropkec.com",
+        "type": "hostname",
+        "role": "Tier-A sibling: same blocklist commit (2026-09-21T23:00:07Z) as api.xyz-code.biz + app.app-river.icu; ThreatFox ClearFake/ClickFix/EtherHiding tagged; animal-word DNS rotation family",
+        "source": "etherhide/CLUSTER.md s5; ThreatFox 1926668",
+        "first_seen": "2026-09-21T17:22:27Z (ThreatFox)",
+        "confidence": "blocklist-derived"
+      },
+      {
+        "value": "fog.beatdropkec.com",
+        "type": "hostname",
+        "role": "Tier-A sibling: same registrable domain as dome",
+        "source": "etherhide/CLUSTER.md s5; ThreatFox 1921467",
+        "first_seen": "2026-09-17T04:50:32Z (ThreatFox)",
+        "confidence": "blocklist-derived"
+      },
+      {
+        "value": "pine.beatdropkec.com",
+        "type": "hostname",
+        "role": "Tier-A sibling: same registrable domain as dome",
+        "source": "etherhide/CLUSTER.md s5; ThreatFox 1929662",
+        "first_seen": "2026-09-23T13:56:33Z (ThreatFox)",
+        "confidence": "blocklist-derived"
+      },
+      {
+        "value": "cds.aiservices.workers.dev",
+        "type": "hostname",
+        "role": "Tier-C sibling: URL inside the 2026-07-24 tweet batch; aiservices namespace seen 404 on 2026-09-25; NOT on-chain",
+        "source": "etherhide/CLUSTER.md s5; infra/INFRA_MAP.md s2",
+        "first_seen": "2026-07-24T13:04Z (TweetFeed)",
+        "confidence": "inferred"
+      },
+      {
+        "value": "nextjs781.ngrok.app",
+        "type": "hostname",
+        "role": "Tier-C sibling: same 2026-07-24 batch; offline (ERR_NGROK_3200) since >= 2026-09-22; NOT on-chain",
+        "source": "etherhide/CLUSTER.md s5; infra/INFRA_MAP.md s2",
+        "first_seen": "2026-07-24T13:04Z (TweetFeed)",
+        "confidence": "inferred"
+      }
+    ]
+  }
+}
